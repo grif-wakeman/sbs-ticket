@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            body {
+                background: linear-gradient(to bottom, #111, #000);
+            }
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .card-wrapper {
+            perspective: 1000px;
+            perspective-origin: center;
+        }
+
+        .card {
+            width: 280px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease, background-position 0.1s ease, box-shadow 0.2s ease;
+            will-change: transform;
+        }
+
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3), transparent 40%);
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            mix-blend-mode: overlay;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .float {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            pointer-events: none;
+        }
+
+        .texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg,
+                    red,
+                    green,
+                    blue,
+                    purple),
+                red;
+            background-size: 200% 200%;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: brightness(1.5) saturate(2);
+            transition: opacity 0.2s ease;
+        }
+
+
+
+        .pokemon {
+            position: relative;
+            display: block;
+            backface-visibility: hidden;
+            image-rendering: crisp-edges;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 1;
+        }
+
+
+
+
+        .foil-mask {
+            position: absolute;
+            top: 55px;
+            left: 24px;
+            width: 252px;
+            height: 185px;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cursor-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 4;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card-wrapper">
+        <div class="card" id="holoCard">
+            <div class="cursor-glow" id="cursorGlow"></div>
+            <img id="pokemon" src="https://dz3we2x72f7ol.cloudfront.net/expansions/151/en-us/SV3pt5_EN_104-2x.png"
+                class="pokemon" />
+            <div class="texture"></div>
+            <div class="float" id="floatLayer">✨</div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        const card = document.getElementById("holoCard");
+
+        card.addEventListener("mousemove", (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -25;
+            const rotateY = ((x - centerX) / centerX) * 25;
+
+
+
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            const percentX = (x / rect.width) * 100;
+            const percentY = (y / rect.height) * 100;
+
+            const texture = document.querySelector(".texture");
+
+            // Increase texture opacity when card is tilted
+            const tiltAmount = Math.abs(rotateX) + Math.abs(rotateY);
+            const easedOpacity = Math.min(Math.pow(tiltAmount / 30, 3), 0.4);
+            texture.style.opacity = easedOpacity;
+
+            texture.style.opacity = Math.min(tiltAmount / 10, 0.5); // cap at 0.6
+            texture.style.backgroundPosition = `${percentX}% ${percentY}%`;
+
+
+
+
+            // Calculate distance from center as glow intensity
+            const distX = (x - centerX) / centerX;
+            const distY = (y - centerY) / centerY;
+            const dist = Math.sqrt(distX * distX + distY * distY); // 0 to ~1.4
+            const glow = Math.min(dist * 100, 100); // cap at 100 for safety
+
+            // Add rainbow-colored glow
+            card.style.boxShadow = `
+  0 20px 50px rgba(0, 0, 0, 0.8),
+  0 5px 15px rgba(0, 0, 0, 0.5)
+`;
+
+            const pokemon = document.getElementById("pokemon");
+
+            card.addEventListener("dblclick", (event) => {
+                if (pokemon.src === "https://dz3we2x72f7ol.cloudfront.net/expansions/151/en-us/SV3pt5_EN_143-2x.png") {
+                    pokemon.src = "https://dz3we2x72f7ol.cloudfront.net/expansions/151/en-us/SV3pt5_EN_104-2x.png"
+                } else {
+                    pokemon.src = "https://dz3we2x72f7ol.cloudfront.net/expansions/151/en-us/SV3pt5_EN_143-2x.png"
+                }
+            })
+
+
+            const float = document.getElementById("floatLayer");
+
+            // Offset the float layer by a smaller, opposite amount for depth
+            const floatOffsetX = ((x - centerX) / centerX) * -50; // Negative for inverse parallax
+            const floatOffsetY = ((y - centerY) / centerY) * -50;
+
+            float.style.transform = `translate(-50%, -50%) translate(${floatOffsetX}px, ${floatOffsetY}px)`;
+
+            const cursorGlow = document.getElementById("cursorGlow");
+            cursorGlow.style.opacity = "1";
+            cursorGlow.style.background = `radial-gradient(
+                circle at ${x}px ${y}px,
+                rgba(255, 255, 255, 0.25) 0%,
+                transparent 40%
+            )`;
+
+
+        });
+
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "rotateX(0deg) rotateY(0deg)";
+            card.style.backgroundPosition = "50% 50%";
+            card.style.boxShadow = `
+  0 10px 30px rgba(0, 0, 0, 0.6)
+`;
+            document.querySelector(".texture").style.opacity = "0";
+            cursorGlow.style.opacity = "0";
+
+
+        });
+    </script>
+</body>
+
+</html>

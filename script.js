@@ -1,0 +1,60 @@
+  const wrappers = document.querySelectorAll(".card-wrapper");
+
+        wrappers.forEach((wrapper) => {
+            const card = wrapper.querySelector(".card");
+            const texture = card.querySelector(".texture");
+            const float = card.querySelector(".float");
+            const glow = card.querySelector(".cursor-glow");
+
+            wrapper.addEventListener("mousemove", (e) => {
+                wrapper.classList.add("active");
+
+                const rect = wrapper.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -30;
+                const rotateY = ((x - centerX) / centerX) * 30;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                const percentX = (x / rect.width) * 100;
+                const percentY = (y / rect.height) * 100;
+
+                const tiltAmount = Math.abs(rotateX) + Math.abs(rotateY);
+                const easedOpacity = Math.min(Math.pow(tiltAmount / 30, 2), 0.1);
+                texture.style.opacity = easedOpacity;
+                texture.style.backgroundPosition = `${percentX}% ${percentY}%`;
+
+                const distX = (x - centerX) / centerX;
+                const distY = (y - centerY) / centerY;
+                const floatOffsetX = distX * -50;
+                const floatOffsetY = distY * -50;
+                float.style.transform = `translate(-50%, -50%) translate(${floatOffsetX}px, ${floatOffsetY}px)`;
+
+                glow.style.opacity = ".4";
+                glow.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255, 255, 255, 0.25) 0%, transparent 40%)`;
+
+                wrappers.forEach((w) => {
+                    if (w !== wrapper) {
+                        w.classList.add("inactive");
+                    } else {
+                        w.classList.remove("inactive");
+                    }
+                });
+
+            });
+
+            wrapper.addEventListener("mouseleave", () => {
+                card.style.transform = "rotateX(0deg) rotateY(0deg)";
+                wrapper.classList.remove("active");
+                texture.style.opacity = "0";
+                glow.style.opacity = "0";
+
+                wrappers.forEach((w) => w.classList.remove("inactive"));
+
+            });
+        });

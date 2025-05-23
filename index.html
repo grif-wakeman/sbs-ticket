@@ -162,6 +162,25 @@
             /* not positive! negative! */
         }
 
+        .tickets:hover .seesaw {
+            animation-play-state: paused;
+        }
+
+        /* Highlight hovered ticket */
+        .card-wrapper.hovered {
+            filter: grayscale(0.0) brightness(1.0);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            animation: none !important;
+            transition: none !important;
+        }
+
+        /* Dim the non-hovered ticket */
+        .card-wrapper.dimmed {
+            filter: grayscale(0.5) brightness(0.4);
+            box-shadow: none;
+            animation: none !important;
+        }
+
 
 
         @media only screen and (orientation:landscape) {
@@ -234,6 +253,32 @@
                 document.getElementById("replay").classList.remove("dimmed-start");
             }, 50); // small delay to ensure initial paint
         });
+
+      document.addEventListener("DOMContentLoaded", () => {
+    const tickets = document.querySelectorAll('.card-wrapper');
+
+    tickets.forEach(ticket => {
+        ticket.addEventListener('mouseenter', () => {
+            tickets.forEach(other => {
+                other.classList.remove('hovered', 'dimmed', 'seesaw');
+
+                if (other === ticket) {
+                    other.classList.add('hovered');
+                } else {
+                    other.classList.add('dimmed');
+                }
+            });
+        });
+
+        ticket.addEventListener('mouseleave', () => {
+            tickets.forEach(t => {
+                t.classList.remove('hovered', 'dimmed');
+                t.classList.add('seesaw');
+            });
+        });
+    });
+});
+
     </script>
 </body>
 

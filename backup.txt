@@ -73,18 +73,16 @@
 
         .card-wrapper {
             border-radius: 24px;
+            box-shadow: 0 0px 30px rgba(0, 0, 0, 0.986);
+            transition: transform 0.6s ease, box-shadow 0.6s ease;
         }
 
-
-        .card-wrapper.active {
-            transform: scale(1.07);
-            z-index: 2;
-            /* Optional: pop forward slightly */
+        .scale-up {
+            transform: scale(1.01);
         }
 
-
-        .card-wrapper.inactive {
-            transform: scale(0.95);
+        .dim {
+            transform: scale(0.99);
             filter: grayscale(.1) brightness(0.4);
             transition: transform 0.3s ease, filter 0.3s ease;
         }
@@ -101,28 +99,33 @@
             pointer-events: none;
             opacity: 1;
             will-change: transform, opacity, filter;
-            
+
         }
 
-        @keyframes glowPink {
-    0% { box-shadow: 0 0 0px rgba(255, 105, 180, 0); }
-    50% { box-shadow: 0 0 15px rgba(255, 105, 180, 0.6); }
-    100% { box-shadow: 0 0 0px rgba(255, 105, 180, 0); }
-}
+        @keyframes glowGrowWhite {
+            0% {
+                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+            }
 
-@keyframes glowWhite {
-    0% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
-    50% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); }
-    100% { box-shadow: 0 0 0px rgba(255, 255, 255, 0); }
-}
+            50% {
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+                
+            }
 
-.glow-pink {
-    animation: glowPink 2s ease-in-out forwards;
-}
+            100% {
+                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+              
+            }
+        }
 
-.glow-white {
-    animation: glowWhite 2s ease-in-out forwards;
-}
+        .glow-grow-white {
+            animation: glowGrowWhite 2s ease-in-out forwards;
+        }
+
+        .dim {
+            filter: grayscale(0.4) brightness(0.6);
+            transition: filter 0.6s ease, transform 0.6s ease;
+        }
 
 
 
@@ -189,24 +192,26 @@
         let toggle = true;
 
 setInterval(() => {
-    const live = document.getElementById('live');
-    const replay = document.getElementById('replay');
+  const live = document.getElementById('live');
+  const replay = document.getElementById('replay');
 
-    if (toggle) {
-        live.classList.add('glow-pink');
-        replay.classList.remove('glow-white');
-    } else {
-        replay.classList.add('glow-white');
-        live.classList.remove('glow-pink');
-    }
+  // Clear previous animation + dim
+  live.classList.remove('glow-grow-white', 'dim');
+  replay.classList.remove('glow-grow-white', 'dim');
 
-    // Restart animation by forcing reflow
-    if (!toggle) {
-        live.offsetHeight;
-        replay.offsetHeight;
-    }
+  // Force reflow to restart animation cleanly
+  void live.offsetWidth;
+  void replay.offsetWidth;
 
-    toggle = !toggle;
+  if (toggle) {
+    live.classList.add('glow-grow-white');   // Active
+    replay.classList.add('dim');             // Dimmed
+  } else {
+    replay.classList.add('glow-grow-white'); // Active
+    live.classList.add('dim');               // Dimmed
+  }
+
+  toggle = !toggle;
 }, 2000);
     </script>
 </body>

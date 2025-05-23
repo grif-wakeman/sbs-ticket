@@ -28,6 +28,8 @@
                 const easedOpacity = Math.min(Math.pow(tiltAmount / 30, 2), 0.1);
                 texture.style.opacity = easedOpacity;
                 texture.style.backgroundPosition = `${percentX}% ${percentY}%`;
+                texture.offsetHeight; // force reflow
+
 
                 const distX = (x - centerX) / centerX;
                 const distY = (y - centerY) / centerY;

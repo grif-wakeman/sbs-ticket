@@ -43,6 +43,7 @@ h1 {
 
 .tickets {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     margin: 0;
     gap: 50px;

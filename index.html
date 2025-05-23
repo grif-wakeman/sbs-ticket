@@ -102,50 +102,65 @@
 
         }
 
-        @keyframes glowGrowWhite {
+        @keyframes seesawGlow {
             0% {
-                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+                filter: grayscale(0.2) brightness(0.8);
+                /* midpoint = 5 */
+                box-shadow: 0 0 0 rgba(255, 255, 255, 0);
             }
 
-            50% {
+            25% {
+                filter: grayscale(0.0) brightness(1.0);
+                /* glow = 10 */
                 box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-
-            }
-
-            100% {
-                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
-
-            }
-        }
-
-        .glow-grow-white {
-            animation: glowGrowWhite 2s ease-in-out forwards;
-        }
-
-        .dim {
-            filter: grayscale(0.4) brightness(0.6);
-            transition: filter 0.6s ease, transform 0.6s ease;
-        }
-
-        @keyframes dimEffect {
-            0% {
-                filter: none;
             }
 
             50% {
-                filter: grayscale(0.4) brightness(0.6);
+                filter: grayscale(0.2) brightness(0.8);
+                /* back to midpoint = 5 */
+                box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+            }
+
+            75% {
+                filter: grayscale(0.5) brightness(0.4);
+                /* dim = 0 */
+                box-shadow: none;
             }
 
             100% {
-                filter: none;
+                filter: grayscale(0.2) brightness(0.8);
+                /* back to midpoint = 5 */
+                box-shadow: none;
             }
         }
 
-        .dim-animate {
-            animation: dimEffect 2s ease-in-out forwards;
+        .seesaw {
+            animation: seesawGlow 6s ease-in-out infinite;
+            animation-fill-mode: both;
         }
 
+        #live.seesaw {
+            animation-delay: 0s;
+        }
 
+        #replay.seesaw {
+            animation-delay: 3s;
+            /* half the duration — perfectly opposite */
+        }
+
+        .dimmed-start {
+            filter: grayscale(0.5) brightness(0.4);
+            box-shadow: none;
+        }
+
+        #live.seesaw {
+            animation-delay: 0s;
+        }
+
+        #replay.seesaw {
+            animation-delay: -3s;
+            /* not positive! negative! */
+        }
 
 
 
@@ -178,12 +193,12 @@
             <h1 class="instrument-serif-regular">choose your subscription</h1>
         </div>
         <div class="tickets">
-            <div id="live" class="card-wrapper">
+            <div id="live" class="card-wrapper seesaw">
                 <div class="card">
                     <img src="./Assets/SBS Live + Replay Pass Mobile.png" alt="SBS Live + Replay Pass" class="pokemon">
                 </div>
             </div>
-            <div id="replay" class="card-wrapper">
+            <div id="replay" class="card-wrapper seesaw dimmed-start">
                 <div class="card">
                     <img src="./Assets/SBS Replay Only Pass Mobile.png" alt="SBS Reply Only Pass" class="pokemon">
                 </div>
@@ -209,30 +224,11 @@
         window.addEventListener("resize", swapImagesForDesktop);
         window.addEventListener("DOMContentLoaded", swapImagesForDesktop);
 
-        let toggle = true;
-
-        setInterval(() => {
-            const live = document.getElementById('live');
-            const replay = document.getElementById('replay');
-
-            // Remove both animations
-            live.classList.remove('glow-grow-white', 'dim-animate');
-            replay.classList.remove('glow-grow-white', 'dim-animate');
-
-            // Force reflow
-            void live.offsetWidth;
-            void replay.offsetWidth;
-
-            if (toggle) {
-                live.classList.add('glow-grow-white');
-                replay.classList.add('dim-animate');
-            } else {
-                replay.classList.add('glow-grow-white');
-                live.classList.add('dim-animate');
-            }
-
-            toggle = !toggle;
-        }, 2000);
+        window.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                document.getElementById("replay").classList.remove("dimmed-start");
+            }, 50); // small delay to ensure initial paint
+        });
     </script>
 </body>
 

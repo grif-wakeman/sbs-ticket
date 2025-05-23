@@ -102,30 +102,48 @@
 
         }
 
-        @keyframes glowGrowWhite {
-            0% {
-                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
-            }
+        @keyframes seesawGlow {
+  0% {
+    filter: grayscale(0.2) brightness(0.8); /* midpoint = 5 */
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
 
-            50% {
-                box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-                
-            }
+  25% {
+    filter: grayscale(0.0) brightness(1.0); /* glow = 10 */
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  }
 
-            100% {
-                box-shadow: 0 0 0px rgba(255, 255, 255, 0);
-              
-            }
-        }
+  50% {
+    filter: grayscale(0.2) brightness(0.8); /* back to midpoint = 5 */
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
 
-        .glow-grow-white {
-            animation: glowGrowWhite 2s ease-in-out forwards;
-        }
+  75% {
+    filter: grayscale(0.5) brightness(0.4); /* dim = 0 */
+    box-shadow: none;
+  }
 
-        .dim {
-            filter: grayscale(0.4) brightness(0.6);
-            transition: filter 0.6s ease, transform 0.6s ease;
-        }
+  100% {
+    filter: grayscale(0.2) brightness(0.8); /* back to midpoint = 5 */
+    box-shadow: none;
+  }
+}
+
+.seesaw {
+  animation: seesawGlow 6s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+
+#live.seesaw {
+  animation-delay: 0s;
+}
+
+#replay.seesaw {
+  animation-delay: 3s; /* half the duration — perfectly opposite */
+}
+
+
+
 
 
 
@@ -158,12 +176,12 @@
             <h1 class="instrument-serif-regular">choose your subscription</h1>
         </div>
         <div class="tickets">
-            <div id="live" class="card-wrapper">
+            <div id="live" class="card-wrapper seesaw">
                 <div class="card">
                     <img src="./Assets/SBS Live + Replay Pass Mobile.png" alt="SBS Live + Replay Pass" class="pokemon">
                 </div>
             </div>
-            <div id="replay" class="card-wrapper">
+            <div id="replay" class="card-wrapper seesaw">
                 <div class="card">
                     <img src="./Assets/SBS Replay Only Pass Mobile.png" alt="SBS Reply Only Pass" class="pokemon">
                 </div>
@@ -188,31 +206,6 @@
 
         window.addEventListener("resize", swapImagesForDesktop);
         window.addEventListener("DOMContentLoaded", swapImagesForDesktop);
-
-        let toggle = true;
-
-setInterval(() => {
-  const live = document.getElementById('live');
-  const replay = document.getElementById('replay');
-
-  // Clear previous animation + dim
-  live.classList.remove('glow-grow-white', 'dim');
-  replay.classList.remove('glow-grow-white', 'dim');
-
-  // Force reflow to restart animation cleanly
-  void live.offsetWidth;
-  void replay.offsetWidth;
-
-  if (toggle) {
-    live.classList.add('glow-grow-white');   // Active
-    replay.classList.add('dim');             // Dimmed
-  } else {
-    replay.classList.add('glow-grow-white'); // Active
-    live.classList.add('dim');               // Dimmed
-  }
-
-  toggle = !toggle;
-}, 2000);
     </script>
 </body>
 

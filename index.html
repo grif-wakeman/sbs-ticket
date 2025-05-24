@@ -55,7 +55,7 @@
 
         h1 {
             font-size: clamp(36px, 7vw, 60px);
-            margin-bottom: 25px;
+            margin-bottom: 18px;
             letter-spacing: -1px;
         }
 
@@ -182,6 +182,15 @@
         }
 
 
+        .disclaimer {
+            font-family: sans-serif;
+            width: 80%;
+            max-width: 450px;
+            font-size: 10px;
+            margin: 20px auto;
+            color: #616060;
+            text-align: justify;
+        }
 
         @media only screen and (orientation:landscape) {
 
@@ -192,11 +201,16 @@
                 justify-content: center;
                 gap: 30px;
                 padding: 0 50px;
-                max-width: 810px;
+                max-width: 780px;
             }
 
             .spacer {
                 height: 100px;
+            }
+
+            .disclaimer {
+                max-width: 780px;
+                padding: 0 50px;
             }
 
         }
@@ -228,6 +242,13 @@
                 </div>
             </a>
         </div>
+        <div class="disclaimer">
+            <p>On the next page, Sync Beast will collect your email and phone number to send you Zoom
+                links, reminders, and replays for your sessions. We will not send marketing messages. You may opt out of texts at
+                any
+                time.
+            </p>
+        </div>
         <div class="spacer"></div>
     </main>
     <script>
@@ -254,30 +275,30 @@
             }, 50); // small delay to ensure initial paint
         });
 
-      document.addEventListener("DOMContentLoaded", () => {
-    const tickets = document.querySelectorAll('.card-wrapper');
+        document.addEventListener("DOMContentLoaded", () => {
+            const tickets = document.querySelectorAll('.card-wrapper');
 
-    tickets.forEach(ticket => {
-        ticket.addEventListener('mouseenter', () => {
-            tickets.forEach(other => {
-                other.classList.remove('hovered', 'dimmed', 'seesaw');
+            tickets.forEach(ticket => {
+                ticket.addEventListener('mouseenter', () => {
+                    tickets.forEach(other => {
+                        other.classList.remove('hovered', 'dimmed', 'seesaw');
 
-                if (other === ticket) {
-                    other.classList.add('hovered');
-                } else {
-                    other.classList.add('dimmed');
-                }
+                        if (other === ticket) {
+                            other.classList.add('hovered');
+                        } else {
+                            other.classList.add('dimmed');
+                        }
+                    });
+                });
+
+                ticket.addEventListener('mouseleave', () => {
+                    tickets.forEach(t => {
+                        t.classList.remove('hovered', 'dimmed');
+                        t.classList.add('seesaw');
+                    });
+                });
             });
         });
-
-        ticket.addEventListener('mouseleave', () => {
-            tickets.forEach(t => {
-                t.classList.remove('hovered', 'dimmed');
-                t.classList.add('seesaw');
-            });
-        });
-    });
-});
 
     </script>
 </body>
